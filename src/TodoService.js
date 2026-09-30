@@ -33,6 +33,24 @@ export class TodoService {
     return task.id;
   }
 
+  getWorkloadSummary() {
+    let done = 0;
+    let urgent = 0;
+    let normal = 0;
+
+    for (const task of this.tasks) {
+      if (task.completed) {
+        done++;
+      } else if (task.priority === 'high') {
+        urgent++;
+      } else {
+        normal++;
+      }
+    }
+
+    return `${done}/${this.tasks.length} done - ${urgent} urgent, ${normal} normal remaining`;
+  }
+
   toggleComplete(id) {
     const task = this.tasks.find(t => t.id === id);
     if (!task) return;

@@ -1,33 +1,30 @@
 import { LocalStorageHandler } from './LocalStorageHandler.js';
 import { TodoService } from './TodoService.js';
 import { TodoRenderer } from './TodoRenderer.js';
+import { TodoController } from './TodoController.js';
 
 window.addEventListener('DOMContentLoaded', () => {
-  const storage = new LocalStorageHandler();
-  const service = new TodoService(storage);
-  const renderer = new TodoRenderer('task-container', service);
+  const service = new TodoService(new LocalStorageHandler());
+  const renderer = new TodoRenderer('task-container');
+  const controller = new TodoController(service, renderer);
   
-  renderer.render();
+  // Link renderer back to controller for event handling
+  renderer.setController(controller);
+  
+  controller.start();
 
   const input = document.getElementById('task-input');
   const addBtn = document.getElementById('add-task-btn');
   const addUrgentBtn = document.getElementById('add-urgent-btn');
 
-  addBtn.addEventListener('click', () => {
-    const id = service.addTask(input.value, 'simple');
-    if (id) {
+  function add(type) {
+    if (controller.addTask(input.value, type)) {
       input.value = '';
-      renderer.render(id);
     }
-  });
+  }
 
-  addUrgentBtn.addEventListener('click', () => {
-    const id = service.addTask(input.value, 'urgent');
-    if (id) {
-      input.value = '';
-      renderer.render(id);
-    }
-  });
+  addBtn.addEventListener('click', () => add('simple'));
+  addUrgentBtn.addEventListener('click', () => add('urgent'));
 
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {

@@ -1,7 +1,11 @@
 export class TodoRenderer {
-  constructor(containerId, service) {
+  constructor(containerId) {
     this.container = document.getElementById(containerId);
-    this.service = service;
+    this.controller = null;
+  }
+
+  setController(controller) {
+    this.controller = controller;
   }
 
   buildTaskRow(id, desc, completed, priority, createdAt, showActions) {
@@ -22,32 +26,32 @@ export class TodoRenderer {
       </li>`;
   }
 
-  renderPendingRows() {
+  renderPendingRows(service) {
     let html = '';
-    for (const task of this.service.tasks) {
+    for (const task of service.tasks) {
       if (task.completed) continue;
       html += this.buildTaskRow(task.id, task.desc, task.completed, task.priority, task.createdAt, true);
     }
     return html;
   }
 
-  renderCompletedRows() {
+  renderCompletedRows(service) {
     let html = '';
-    for (const task of this.service.tasks) {
+    for (const task of service.tasks) {
       if (!task.completed) continue;
       html += this.buildTaskRow(task.id, task.desc, task.completed, task.priority, task.createdAt, true);
     }
     return html;
   }
 
-  render(justAddedId) {
+  render(service, justAddedId) {
     if (!this.container) return;
 
-    const pendingHtml = this.renderPendingRows();
-    const completedHtml = this.renderCompletedRows();
+    const pendingHtml = this.renderPendingRows(service);
+    const completedHtml = this.renderCompletedRows(service);
 
     let oldestPendingLabel = 'none';
-    for (const task of this.service.tasks) {
+    for (const task of service.tasks) {
       if (!task.completed) {
         oldestPendingLabel = task.desc;
         break;
@@ -55,7 +59,7 @@ export class TodoRenderer {
     }
 
     this.container.innerHTML =
-      `<p class="status">${this.service.summarizeWorkload()} - oldest: ${oldestPendingLabel}</p>` +
+      `<p class="status">${service.getWorkloadSummary()} - oldest: ${oldestPendingLabel}</p>` +
       '<h2 class="section-title">To do</h2>' +
       `<ul>${pendingHtml || '<li>Nothing pending. Add a task above.</li>'}</ul>` +
       '<h2 class="section-title">Completed</h2>' +
@@ -63,15 +67,17 @@ export class TodoRenderer {
 
     this.container.querySelectorAll('[data-toggle]').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.service.toggleComplete(Number(btn.dataset.toggle));
-        this.render();
+        if (this.controller) {
+          this.controller.toggleTask(Number(btn.dataset.toggle));
+        }
       });
     });
 
     this.container.querySelectorAll('[data-delete]').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.service.deleteTask(Number(btn.dataset.delete));
-        this.render();
+        if (this.controller) {
+          this.controller.deleteTask(Number(btn.dataset.delete));
+        }
       });
     });
 
