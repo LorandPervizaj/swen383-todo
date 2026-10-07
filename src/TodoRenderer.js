@@ -89,6 +89,6 @@ export class TodoRenderer {
       }
     }
 
-    document.title = `Todo (${this.service.tasks.filter(t => !t.completed).length})`;
+    document.title = `Todo (${service.tasks.filter(t => !t.completed).length})`;
   }
 }

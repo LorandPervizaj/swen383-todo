@@ -10,4 +10,7 @@
 **Where:** src/todo.js, line 124 (buildTaskRow)
 **Smell:** Long Parameter List. The function accepts six individual arguments to represent a task's state rather than passing a single task object.
 
-## All Smells **not yet addressed**, Noted for Week 3.
+## All Smells addressed in Week 3 and Week 4 refactors.
+- **God Object**: Split into `TodoService`, `TodoRenderer`, `TodoController`, and `LocalStorageHandler`.
+- **Long Method**: `render` logic decomposed and moved to `TodoRenderer`.
+- **Long Parameter List**: Task state handled via service and specific renderer methods.

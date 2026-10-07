@@ -8,7 +8,7 @@ export class TodoService {
     const trimmed = description.trim();
     if (trimmed.length < 3) {
       alert('Task needs at least a few characters.');
-      return false;
+      return null;
     }
 
     if (this.tasks.length >= 20) {
@@ -61,24 +61,5 @@ export class TodoService {
   deleteTask(id) {
     this.tasks = this.tasks.filter(t => t.id !== id);
     this.storage.save(this.tasks);
-  }
-
-  summarizeWorkload() {
-    let done = 0;
-    let urgent = 0;
-    let normal = 0;
-
-    for (const task of this.tasks) {
-      if (task.completed) {
-        done++;
-      } else if (task.priority === 'high') {
-        urgent++;
-      } else {
-        normal++;
-      }
-    }
-
-    const total = this.tasks.length;
-    return `${done}/${total} done - ${urgent} urgent, ${normal} normal remaining`;
   }
 }
