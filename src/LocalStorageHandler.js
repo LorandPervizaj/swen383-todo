@@ -1,14 +1,12 @@
-export class LocalStorageHandler {
-  constructor(key = 'todo-tasks') {
-    this.key = key;
-  }
+// src/LocalStorageHandler.js
+import { StorageHandler } from './StorageHandler.js';
 
+export class LocalStorageHandler extends StorageHandler {
   load() {
-    const raw = localStorage.getItem(this.key);
+    const raw = localStorage.getItem('todo-tasks');
     return raw ? JSON.parse(raw) : [];
   }
-
   save(tasks) {
-    localStorage.setItem(this.key, JSON.stringify(tasks));
+    localStorage.setItem('todo-tasks', JSON.stringify(tasks));
   }
 }
